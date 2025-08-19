@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="60">
+    <Properties>
+        <Property name="log-path">logs</Property>
+        <Property name="archive">${log-path}/archive</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console-Appender" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>
+                    [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - [%X{requestId}] %msg%n
+                </pattern>
+            </PatternLayout>
+        </Console>
+
+        <RollingFile name="SpringBoot-File-Appender" fileName="${log-path}/springboot.log"
+        filePattern="${archive}/springboot.log.%d{yyyy-MM-dd}-%i.gz">
+            <PatternLayout>
+                <pattern>
+                    [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+                </pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy
+                    size="1 GB" />
+            </Policies>
+            <DefaultRolloverStrategy fileIndex="nomax">
+                <Delete basePath="${archive}">
+                    <IfFileName glob="springboot.log*.gz">
+                        <IfAny>
+                            <IfLastModified age="60d" />
+                        </IfAny>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="RollingFile-Appender" fileName="${log-path}/application.log"
+            filePattern="${archive}/application.log.%d{yyyy-MM-dd}-%i.gz">
+            <PatternLayout>
+                <pattern>
+                    [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - [%X{requestId}] %msg%n
+                </pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy
+                    size="1 GB" />
+            </Policies>
+            <DefaultRolloverStrategy fileIndex="nomax">
+                <Delete basePath="${archive}">
+                    <IfFileName glob="application.log*.gz">
+                        <IfAny>
+                            <IfLastModified age="60d" />
+                        </IfAny>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+
+        <Logger name="org.springframework.web" level="info" additivity="false">
+            <AppenderRef ref="SpringBoot-File-Appender" />
+        </Logger>
+
+        <Logger name="com.mathworks.bat.trupload" level="info" additivity="false">
+            <AppenderRef ref="RollingFile-Appender" />
+        </Logger>
+
+        <Root level="warn" additivity="false">
+            <AppenderRef ref="RollingFile-Appender" />
+        </Root>
+
+    </Loggers>
+</Configuration>

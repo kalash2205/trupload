@@ -1,0 +1,14 @@
+[Unit]
+Description=truploadws
+After=syslog.target
+
+[Service]
+Type=forking
+User=truploadws
+ExecStart=/opt/truploadws/truploadws.jar start
+ExecStop=/opt/truploadws/truploadws.jar stop
+SuccessExitStatus=143
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
